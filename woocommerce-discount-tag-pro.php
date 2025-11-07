@@ -2,8 +2,8 @@
 /**
  * Plugin Name: WooCommerce Discount Tag Pro
  * Plugin URI: https://github.com/yourusername/woocommerce-discount-tag-pro
- * Description: نمایش تگ تخفیف حرفه‌ای با پنل تنظیمات کامل و اشکال متنوع
- * Version: 2.0.0
+ * Description: نمایش تگ تخفیف حرفه‌ای با پنل تنظیمات کامل، اشکال متنوع و نمایش در کنار قیمت
+ * Version: 2.1.0
  * Author: Your Name
  * Author URI: https://yourwebsite.com
  * Text Domain: wc-discount-tag-pro
@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
 }
 
 // تعریف ثابت‌های پلاگین
-define('WC_DISCOUNT_TAG_PRO_VERSION', '2.0.0');
+define('WC_DISCOUNT_TAG_PRO_VERSION', '2.1.0');
 
 class WC_Discount_Tag_Pro {
 
@@ -47,6 +47,8 @@ class WC_Discount_Tag_Pro {
         'animation_type' => 'pulse',
         'show_on_shop' => 'yes',
         'show_on_single' => 'yes',
+        'show_on_shop_price' => 'yes',
+        'show_on_single_price' => 'yes',
     );
 
     /**
@@ -79,9 +81,12 @@ class WC_Discount_Tag_Pro {
         // اضافه کردن استایل‌ها
         add_action('wp_head', array($this, 'add_inline_styles'));
 
-        // اضافه کردن تگ تخفیف به محصولات
+        // اضافه کردن تگ تخفیف به محصولات (روی تصویر)
         add_action('woocommerce_before_shop_loop_item_title', array($this, 'show_discount_tag'), 10);
         add_action('woocommerce_before_single_product_summary', array($this, 'show_discount_tag_single'), 20);
+
+        // اضافه کردن تگ تخفیف در کنار قیمت
+        add_filter('woocommerce_get_price_html', array($this, 'add_price_badge'), 10, 2);
 
         // افزودن تنظیمات به پنل مدیریت
         add_filter('woocommerce_settings_tabs_array', array($this, 'add_settings_tab'), 50);
@@ -262,8 +267,22 @@ class WC_Discount_Tag_Pro {
             ),
             array(
                 'title' => __('نمایش در صفحه محصول', 'wc-discount-tag-pro'),
-                'desc' => __('نمایش تگ در صفحه محصول', 'wc-discount-tag-pro'),
+                'desc' => __('نمایش تگ روی تصویر در صفحه محصول', 'wc-discount-tag-pro'),
                 'id' => 'wc_discount_tag_show_on_single',
+                'default' => 'yes',
+                'type' => 'checkbox'
+            ),
+            array(
+                'title' => __('نمایش در کنار قیمت فروشگاه', 'wc-discount-tag-pro'),
+                'desc' => __('نمایش تگ تخفیف در کنار قیمت در صفحه فروشگاه', 'wc-discount-tag-pro'),
+                'id' => 'wc_discount_tag_show_on_shop_price',
+                'default' => 'yes',
+                'type' => 'checkbox'
+            ),
+            array(
+                'title' => __('نمایش در کنار قیمت صفحه محصول', 'wc-discount-tag-pro'),
+                'desc' => __('نمایش تگ تخفیف در کنار قیمت در صفحه محصول', 'wc-discount-tag-pro'),
+                'id' => 'wc_discount_tag_show_on_single_price',
                 'default' => 'yes',
                 'type' => 'checkbox'
             ),
@@ -463,6 +482,67 @@ class WC_Discount_Tag_Pro {
                     font-size: <?php echo esc_attr($font_size + 2); ?>px;
                 }
             }
+
+            /* استایل تگ در کنار قیمت */
+            .wc-discount-price-badge {
+                display: inline-block;
+                background: <?php echo esc_attr($bg_color); ?>;
+                color: <?php echo esc_attr($text_color); ?>;
+                padding: 4px 10px;
+                border-radius: 4px;
+                font-size: <?php echo esc_attr($font_size - 2); ?>px;
+                font-weight: bold;
+                font-family: 'Tahoma', 'Arial', sans-serif;
+                direction: rtl;
+                margin-right: 8px;
+                vertical-align: middle;
+                white-space: nowrap;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+                <?php if ($animation !== 'none'): ?>
+                animation: wc-discount-<?php echo esc_attr($animation); ?> 2s infinite;
+                <?php endif; ?>
+            }
+
+            .wc-discount-price-badge .price-badge-text {
+                font-size: <?php echo esc_attr($font_size - 2); ?>px;
+            }
+
+            .wc-discount-price-badge .price-badge-percentage {
+                font-size: <?php echo esc_attr($font_size); ?>px;
+                font-weight: 900;
+            }
+
+            /* استایل خاص برای صفحه محصول */
+            .single-product .wc-discount-price-badge {
+                font-size: <?php echo esc_attr($font_size); ?>px;
+                padding: 6px 14px;
+                margin-right: 12px;
+            }
+
+            .single-product .wc-discount-price-badge .price-badge-text {
+                font-size: <?php echo esc_attr($font_size); ?>px;
+            }
+
+            .single-product .wc-discount-price-badge .price-badge-percentage {
+                font-size: <?php echo esc_attr($font_size + 2); ?>px;
+            }
+
+            /* ریسپانسیو برای تگ قیمت */
+            @media (max-width: 768px) {
+                .wc-discount-price-badge {
+                    font-size: <?php echo esc_attr($font_size - 3); ?>px;
+                    padding: 3px 8px;
+                    margin-right: 5px;
+                }
+
+                .wc-discount-price-badge .price-badge-text {
+                    font-size: <?php echo esc_attr($font_size - 3); ?>px;
+                }
+
+                .wc-discount-price-badge .price-badge-percentage {
+                    font-size: <?php echo esc_attr($font_size - 1); ?>px;
+                }
+            }
         </style>
         <?php
     }
@@ -621,6 +701,59 @@ class WC_Discount_Tag_Pro {
         $percentage = round((($regular_price - $sale_price) / $regular_price) * 100);
 
         return $percentage;
+    }
+
+    /**
+     * اضافه کردن تگ تخفیف در کنار قیمت
+     */
+    public function add_price_badge($price, $product) {
+        // بررسی اینکه محصول در حال تخفیف است
+        if (!$product->is_on_sale()) {
+            return $price;
+        }
+
+        $settings = $this->get_settings();
+
+        // بررسی فعال بودن افزونه
+        if ($settings['enabled'] !== 'yes') {
+            return $price;
+        }
+
+        // بررسی غیرفعال نبودن تگ برای این محصول
+        if (!$this->should_show_tag($product->get_id())) {
+            return $price;
+        }
+
+        // تشخیص صفحه
+        $is_single = is_product();
+        $show_on_price = false;
+
+        if ($is_single && $settings['show_on_single_price'] === 'yes') {
+            $show_on_price = true;
+        } elseif (!$is_single && $settings['show_on_shop_price'] === 'yes') {
+            $show_on_price = true;
+        }
+
+        if (!$show_on_price) {
+            return $price;
+        }
+
+        // گرفتن متن و درصد
+        $custom_text = $this->get_custom_text($product->get_id());
+        $text = $custom_text ? $custom_text : $settings['text'];
+        $percentage = $this->get_discount_percentage($product);
+
+        // ساخت تگ
+        $badge_html = '<span class="wc-discount-price-badge">';
+        $badge_html .= '<span class="price-badge-text">' . esc_html($text) . '</span>';
+
+        if ($settings['show_percentage'] === 'yes' && $percentage > 0) {
+            $badge_html .= ' <span class="price-badge-percentage">' . esc_html($percentage) . '%</span>';
+        }
+
+        $badge_html .= '</span>';
+
+        return $price . ' ' . $badge_html;
     }
 
     /**
