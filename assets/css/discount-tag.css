@@ -1,0 +1,187 @@
+/**
+ * WooCommerce Discount Tag Styles
+ * استایل‌های تگ تخفیف ووکامرس
+ */
+
+/* تنظیمات عمومی تگ تخفیف */
+.wc-discount-tag {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+    pointer-events: none;
+}
+
+/* تگ تخفیف در صفحه فروشگاه (حالت لوپ) */
+.wc-discount-tag-loop {
+    top: 10px;
+    right: 10px;
+}
+
+/* تگ تخفیف در صفحه محصول */
+.wc-discount-tag-single {
+    top: 15px;
+    right: 15px;
+}
+
+/* بج تخفیف */
+.wc-discount-tag .discount-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+    color: #ffffff;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    animation: pulse 2s infinite;
+    font-family: 'Tahoma', 'Arial', sans-serif;
+    direction: rtl;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* متن تخفیف */
+.wc-discount-tag .discount-text {
+    display: block;
+    font-size: 12px;
+    line-height: 1.3;
+    margin-bottom: 2px;
+    white-space: nowrap;
+}
+
+/* درصد تخفیف */
+.wc-discount-tag .discount-percentage {
+    display: block;
+    font-size: 16px;
+    font-weight: 900;
+    line-height: 1;
+    margin-top: 2px;
+}
+
+/* انیمیشن ضربان برای جلب توجه */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* تنظیمات برای محصولات در حالت لوپ */
+.products .product {
+    position: relative;
+}
+
+.products .product .woocommerce-loop-product__link {
+    position: relative;
+    display: block;
+}
+
+/* تنظیمات برای صفحه محصول */
+.single-product .woocommerce-product-gallery {
+    position: relative;
+}
+
+/* تگ بزرگتر برای صفحه محصول */
+.wc-discount-tag-single .discount-badge {
+    padding: 12px 20px;
+}
+
+.wc-discount-tag-single .discount-text {
+    font-size: 14px;
+}
+
+.wc-discount-tag-single .discount-percentage {
+    font-size: 20px;
+}
+
+/* پشتیبانی از حالت تاریک */
+@media (prefers-color-scheme: dark) {
+    .wc-discount-tag .discount-badge {
+        background: linear-gradient(135deg, #ff1a1a 0%, #d90000 100%);
+        box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* تنظیمات ریسپانسیو */
+@media (max-width: 768px) {
+    .wc-discount-tag {
+        top: 5px;
+        right: 5px;
+    }
+
+    .wc-discount-tag .discount-badge {
+        padding: 6px 12px;
+    }
+
+    .wc-discount-tag .discount-text {
+        font-size: 10px;
+    }
+
+    .wc-discount-tag .discount-percentage {
+        font-size: 14px;
+    }
+
+    .wc-discount-tag-single .discount-badge {
+        padding: 8px 15px;
+    }
+
+    .wc-discount-tag-single .discount-text {
+        font-size: 12px;
+    }
+
+    .wc-discount-tag-single .discount-percentage {
+        font-size: 16px;
+    }
+}
+
+/* سازگاری با تم‌های مختلف */
+.wc-discount-tag .discount-badge {
+    min-width: 80px;
+}
+
+/* اضافه کردن افکت‌های بصری اضافی */
+.wc-discount-tag .discount-badge::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 100%);
+    border-radius: 5px;
+    z-index: -1;
+    opacity: 0.5;
+}
+
+.wc-discount-tag .discount-badge {
+    position: relative;
+}
+
+/* افکت درخشش */
+@keyframes shine {
+    0% {
+        left: -100%;
+    }
+    20%, 100% {
+        left: 100%;
+    }
+}
+
+.wc-discount-tag .discount-badge::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shine 3s infinite;
+}
